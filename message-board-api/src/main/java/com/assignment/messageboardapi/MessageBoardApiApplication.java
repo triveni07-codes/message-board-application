@@ -1,4 +1,4 @@
-package com.assignment.messageboard.messageboardapi;
+package com.assignment.messageboardapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MessageBoardApiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MessageBoardApiApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(MessageBoardApiApplication.class, args);
+  }
 
 }
