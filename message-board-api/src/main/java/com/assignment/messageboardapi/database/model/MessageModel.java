@@ -1,4 +1,4 @@
-package com.assignment.messageboardapi.model.database;
+package com.assignment.messageboardapi.database.model;
 
 import java.io.Serializable;
 import javax.persistence.Column;

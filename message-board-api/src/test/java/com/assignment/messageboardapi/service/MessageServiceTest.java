@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.assignment.messageboardapi.model.database.MessageModel;
-import com.assignment.messageboardapi.model.dto.MessageDTO;
-import com.assignment.messageboardapi.model.message.MessageDetails;
-import com.assignment.messageboardapi.repository.MessageBoardRepository;
+import com.assignment.messageboardapi.database.model.MessageModel;
+import com.assignment.messageboardapi.api.dto.MessageDTO;
+import com.assignment.messageboardapi.api.dto.MessageDetails;
+import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,9 +1,9 @@
 package com.assignment.messageboardapi.service;
 
-import com.assignment.messageboardapi.model.database.MessageModel;
-import com.assignment.messageboardapi.model.dto.MessageDTO;
-import com.assignment.messageboardapi.model.message.MessageDetails;
-import com.assignment.messageboardapi.repository.MessageBoardRepository;
+import com.assignment.messageboardapi.database.model.MessageModel;
+import com.assignment.messageboardapi.api.dto.MessageDTO;
+import com.assignment.messageboardapi.api.dto.MessageDetails;
+import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

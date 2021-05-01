@@ -1,4 +1,4 @@
-package com.assignment.messageboardapi.model.dto;
+package com.assignment.messageboardapi.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageDTO {
+public class MessageDetails {
 
   @JsonProperty("message")
   private String message;
