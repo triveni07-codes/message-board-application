@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MessageDTO {
 
+  @JsonProperty("messageId")
+  private Long messageId;
+
   @JsonProperty("message")
   private String message;
 

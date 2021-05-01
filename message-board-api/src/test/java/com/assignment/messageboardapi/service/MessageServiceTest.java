@@ -37,7 +37,7 @@ class MessageServiceTest {
 
     when(messageBoardRepository.save(any())).thenReturn(entitySaved);
 
-    MessageDTO message = messageService.writeNewMessage(messageDetails);
+    MessageDTO message = messageService.createNewMessage(messageDetails);
     assertEquals(messageDetails.getMessage(), message.getMessage());
 
   }
