@@ -51,6 +51,11 @@ public class MessageService implements MessageBoardService {
     return buildMessageDTO(savedMessage.getId(), savedMessage.getMessage());
   }
 
+  @Override
+  public void deleteMessage(String id) {
+    messageBoardRepository.deleteById(Long.parseLong(id));
+  }
+
   public MessageModel findMessageById(String id) {
     Optional<MessageModel> messageModel = messageBoardRepository.findById(Long.parseLong(id));
     if (messageModel.isEmpty()) {

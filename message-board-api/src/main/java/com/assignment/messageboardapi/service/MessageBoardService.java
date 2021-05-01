@@ -12,4 +12,5 @@ public interface MessageBoardService {
 
   MessageDTO modifyMessage(String id, String message);
 
+  void deleteMessage(String id);
 }

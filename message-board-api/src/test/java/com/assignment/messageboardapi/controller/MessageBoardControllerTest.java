@@ -94,4 +94,12 @@ class MessageBoardControllerTest {
     verify(messageService, times(1)).getAllMessages();
   }
 
+  @Test
+  public void testDeleteMessage_givenMessageId_deletsMessage() throws Exception {
+    this.mockMvc.perform(MockMvcRequestBuilders
+        .delete("/api/messages/{id}", "1")
+        .headers(httpHeaders)).andExpect(status()
+        .is2xxSuccessful()).andReturn();
+  }
+
 }

@@ -41,7 +41,16 @@ public class MessageBoardController implements MessageBoardApi {
       MessageDetails messageModificationRequest, @NotBlank String xTransactionId) {
     log.info("Request received to modify message with transactionId {}", xTransactionId);
     MessageDTO updatedMessage = messageBoardService.modifyMessage(messageId, messageModificationRequest.getMessage());
+    log.info("Message modified successfully transactionId {}", xTransactionId);
     return new ResponseEntity<MessageDTO>(updatedMessage, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<String> deleteMessage(@Valid @NotNull String id, @NotBlank String xTransactionId) {
+    log.info("Request received to delete message with transactionId {}", xTransactionId);
+    messageBoardService.deleteMessage(id);
+    log.info("Message deleted successfully with transactionId {}", xTransactionId);
+    return new ResponseEntity<>("Message deleted successfully", HttpStatus.NO_CONTENT);
   }
 
 }

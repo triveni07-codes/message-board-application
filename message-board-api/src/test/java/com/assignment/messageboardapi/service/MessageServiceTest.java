@@ -2,6 +2,10 @@ package com.assignment.messageboardapi.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.assignment.messageboardapi.api.dto.MessageDTO;
@@ -32,16 +36,17 @@ class MessageServiceTest {
 
   @Test
   public void testCreateNewMessage_givenMessageDetails_savesMessageInDb() {
-    MessageDetails messageDetails = new MessageDetails();
-    messageDetails.setMessage("someMessage");
+    MessageDetails expectedMessage = new MessageDetails();
+    expectedMessage.setMessage("someMessage");
     MessageModel mockEntity = new MessageModel();
     mockEntity.setId(1L);
-    mockEntity.setMessage(messageDetails.getMessage());
+    mockEntity.setMessage(expectedMessage.getMessage());
 
     when(messageBoardRepository.save(any())).thenReturn(mockEntity);
 
-    MessageDTO expectedMessage = messageService.createNewMessage(messageDetails);
-    assertEquals(expectedMessage.getMessage(), messageDetails.getMessage());
+    MessageDTO actualMessage = messageService.createNewMessage(expectedMessage);
+    assertEquals(actualMessage.getMessage(), expectedMessage.getMessage());
+    verify(messageBoardRepository, times(1)).save(any());
 
   }
 
@@ -54,8 +59,31 @@ class MessageServiceTest {
     mockMessagesList.add(messageModel);
     when(messageBoardRepository.findAll()).thenReturn(mockMessagesList);
 
-    List<MessageDTO> expectedMessages = messageService.getAllMessages();
-    assertEquals(expectedMessages.size(), mockMessagesList.size());
+    List<MessageDTO> actualMessageList = messageService.getAllMessages();
+    assertEquals(mockMessagesList.size(), actualMessageList.size());
+    verify(messageBoardRepository, times(1)).findAll();
+
+  }
+
+  @Test
+  public void testUpdateMessage_givenMessageIdAndModificationContent_updatesMessage() throws JsonProcessingException {
+    MessageModel messageModel = new MessageModel();
+    messageModel.setId(1L);
+    messageModel.setMessage("someMessage");
+    when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(messageModel));
+    when(messageBoardRepository.save(any())).thenReturn(messageModel);
+
+    MessageDTO updatedMessageDto = messageService.modifyMessage("1", "updatedMessage");
+    assertEquals("updatedMessage", updatedMessageDto.getMessage());
+    verify(messageBoardRepository, times(1)).save(any());
+
+  }
+
+  @Test
+  public void testDeleteMessage_givenMessageId_deletesMessage() throws JsonProcessingException {
+    doNothing().when(messageBoardRepository).deleteById(anyLong());
+    messageService.deleteMessage("1");
+    verify(messageBoardRepository, times(1)).deleteById(anyLong());
   }
 
 }

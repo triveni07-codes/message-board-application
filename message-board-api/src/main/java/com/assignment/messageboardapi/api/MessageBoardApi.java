@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,6 +60,17 @@ public interface MessageBoardApi {
       @NotBlank @PathVariable("id") String messageId,
       @ApiParam(value = "Modifications to be done", required = true)
       @RequestBody MessageDetails messageModificationRequest,
+      @ApiParam @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
+
+  @ApiOperation(value = "Delete the message", nickname = "deleteMessage",
+      notes = "To remove message:")
+  @ApiResponses(value = {
+      @ApiResponse(code = 204, message = "A message has been deleted"),
+      @ApiResponse(code = 400, message = "Invalid input supplied", response = ErrorResponse.class)})
+  @DeleteMapping(value = "/messages/{id}",
+      produces = {"application/json"})
+  ResponseEntity<String> deleteMessage(@ApiParam(value = "Message id to be deleted") @Valid @NotNull
+  @PathVariable(name = "id", required = true) String id,
       @ApiParam @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
 
 }
