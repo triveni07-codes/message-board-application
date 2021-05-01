@@ -4,10 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.assignment.messageboardapi.database.model.MessageModel;
 import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
+import com.assignment.messageboardapi.database.model.MessageModel;
 import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,18 +31,31 @@ class MessageServiceTest {
   }
 
   @Test
-  public void writeNewMessage() {
+  public void testCreateNewMessage_givenMessageDetails_savesMessageInDb() {
     MessageDetails messageDetails = new MessageDetails();
     messageDetails.setMessage("someMessage");
-    MessageModel entitySaved = new MessageModel();
-    entitySaved.setId(1L);
-    entitySaved.setMessage(messageDetails.getMessage());
+    MessageModel mockEntity = new MessageModel();
+    mockEntity.setId(1L);
+    mockEntity.setMessage(messageDetails.getMessage());
 
-    when(messageBoardRepository.save(any())).thenReturn(entitySaved);
+    when(messageBoardRepository.save(any())).thenReturn(mockEntity);
 
-    MessageDTO message = messageService.createNewMessage(messageDetails);
-    assertEquals(messageDetails.getMessage(), message.getMessage());
+    MessageDTO expectedMessage = messageService.createNewMessage(messageDetails);
+    assertEquals(expectedMessage.getMessage(), messageDetails.getMessage());
 
+  }
+
+  @Test
+  public void testGetAllMessages_returnsListOfMessages() throws JsonProcessingException {
+    List<MessageModel> mockMessagesList = new ArrayList<>();
+    MessageModel messageModel = new MessageModel();
+    messageModel.setId(1L);
+    messageModel.setMessage("someMessage");
+    mockMessagesList.add(messageModel);
+    when(messageBoardRepository.findAll()).thenReturn(mockMessagesList);
+
+    List<MessageDTO> expectedMessages = messageService.getAllMessages();
+    assertEquals(expectedMessages.size(), mockMessagesList.size());
   }
 
 }

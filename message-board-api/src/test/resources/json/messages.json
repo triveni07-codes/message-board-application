@@ -1,29 +1,38 @@
 [
   {
+    "id": "1",
     "message": "Measuring programming progress by lines of code is like measuring aircraft building progress by weight."
   },
   {
+    "id": "2",
     "message": "In a room full of top software designers, if two agree on the same thing, thats a majority."
   },
   {
+    "id": "3",
     "message": "One: Demonstrations always crash. And two: The probability of them crashing goes up exponentially with the number of people watching."
   },
   {
+    "id": "4",
     "message": "A program is never less than 90% complete and never more than 95% complete."
   },
   {
+    "id": "5",
     "message": "In a software project team of ten, there are probably three people who produce enough defects to make them net-negative producers."
   },
   {
+    "id": "6",
     "message": "Most of you are familiar with the virtues of a programmer. There are three, of course: laziness, impatience, and hubris."
   },
   {
+    "id": "7",
     "message": "Walking on water and developing software from a specification are easy if both are frozen."
   },
   {
+    "id": "8",
     "message": "Documentation is like sex: When it is bad, it is better than nothing. When it is good, it is really, really good."
   },
   {
+    "id": "9",
     "message": "Software undergoes beta testing shortly before its released. Beta is Latin for still doesnt work."
   }
 ]

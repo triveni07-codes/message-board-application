@@ -36,4 +36,12 @@ public class MessageBoardController implements MessageBoardApi {
     return new ResponseEntity<List<MessageDTO>>(messageBoardService.getAllMessages(), HttpStatus.OK);
   }
 
+  @Override
+  public ResponseEntity<MessageDTO> modifyMessage(@NotBlank String messageId,
+      MessageDetails messageModificationRequest, @NotBlank String xTransactionId) {
+    log.info("Request received to modify message with transactionId {}", xTransactionId);
+    MessageDTO updatedMessage = messageBoardService.modifyMessage(messageId, messageModificationRequest.getMessage());
+    return new ResponseEntity<MessageDTO>(updatedMessage, HttpStatus.OK);
+  }
+
 }

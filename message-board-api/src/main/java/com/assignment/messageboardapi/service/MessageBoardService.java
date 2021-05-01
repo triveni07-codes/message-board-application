@@ -9,4 +9,7 @@ public interface MessageBoardService {
   MessageDTO createNewMessage(MessageDetails messageDetails);
 
   List<MessageDTO> getAllMessages();
+
+  MessageDTO modifyMessage(String id, String message);
+
 }

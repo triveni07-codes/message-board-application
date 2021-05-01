@@ -4,9 +4,12 @@ import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
 import com.assignment.messageboardapi.database.model.MessageModel;
 import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
-import java.util.ArrayList;
+import com.assignment.messageboardapi.exception.MessagesDataException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,28 +22,48 @@ public class MessageService implements MessageBoardService {
     this.messageBoardRepository = messageBoardRepository;
   }
 
+  @Override
   public MessageDTO createNewMessage(MessageDetails messageDetails) {
     MessageModel messageModel = new MessageModel();
     messageModel.setMessage(messageDetails.getMessage());
-    MessageModel savedMessageEntity = messageBoardRepository.save(messageModel);
-    MessageDTO messageDTO = new MessageDTO();
-    messageDTO.setMessageId(messageModel.getId());
-    messageDTO.setMessage(savedMessageEntity.getMessage());
-    return messageDTO;
+    MessageModel savedMessage = messageBoardRepository.save(messageModel);
+    return buildMessageDTO(savedMessage.getId(), savedMessage.getMessage());
   }
 
   @Override
   public List<MessageDTO> getAllMessages() {
-    List<MessageDTO> messages = new ArrayList<>();
+    List<MessageDTO> messages;
     List<MessageModel> messageModels = messageBoardRepository.findAll();
-    messageModels.forEach(messageModel -> {
-      MessageDTO message = new MessageDTO();
-      message.setMessageId(messageModel.getId());
-      message.setMessage(messageModel.getMessage());
-      messages.add(message);
-    });
+    messages = messageModels.stream()
+        .map(messageModel -> buildMessageDTO(messageModel.getId(), messageModel.getMessage()))
+        .collect(Collectors.toList());
 
     return messages;
+  }
+
+  @Override
+  public MessageDTO modifyMessage(String id, String message) {
+    log.info("Updating message for id {}", id);
+    MessageModel messageModel = findMessageById(id);
+    messageModel.setMessage(message);
+    MessageModel savedMessage = messageBoardRepository.save(messageModel);
+    log.info("Updated message for id {}", id);
+    return buildMessageDTO(savedMessage.getId(), savedMessage.getMessage());
+  }
+
+  public MessageModel findMessageById(String id) {
+    Optional<MessageModel> messageModel = messageBoardRepository.findById(Long.parseLong(id));
+    if (messageModel.isEmpty()) {
+      throw new MessagesDataException("Message does not exist in the db to modify", HttpStatus.NOT_FOUND);
+    }
+    return messageModel.get();
+  }
+
+  private MessageDTO buildMessageDTO(Long id, String message) {
+    MessageDTO messageDTO = new MessageDTO();
+    messageDTO.setMessageId(id);
+    messageDTO.setMessage(message);
+    return messageDTO;
   }
 
 }
