@@ -1,5 +1,9 @@
 package com.assignment.messageboardapi.service;
 
-public class MessageBoardService {
+import com.assignment.messageboardapi.model.dto.MessageDTO;
+import com.assignment.messageboardapi.model.message.MessageDetails;
 
+public interface MessageBoardService {
+
+  MessageDTO writeNewMessage(MessageDetails messageDetails);
 }
