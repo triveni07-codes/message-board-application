@@ -1,9 +1,11 @@
 package com.assignment.messageboardapi.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,6 +14,8 @@ import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
 import com.assignment.messageboardapi.database.model.MessageModel;
 import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
+import com.assignment.messageboardapi.exception.ErrorMessage;
+import com.assignment.messageboardapi.exception.MessagesDataException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +77,23 @@ class MessageServiceTest {
   }
 
   @Test
+  public void testUpdateMessage_givenMessageAndNotMatchingUsername_throwsException() throws JsonProcessingException {
+    MessageModel messageModel = buildMessageEntity();
+    when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(messageModel));
+
+    Exception exception = assertThrows(MessagesDataException.class, () -> {
+      messageService.modifyMessage("", "1", "updatedMessage");
+    });
+
+    String expectedMessage = String.valueOf(ErrorMessage.MODIFICATION_NOT_ALLOWED);
+    String actualMessage = exception.getMessage();
+
+    assertEquals(expectedMessage, actualMessage);
+    verify(messageBoardRepository, never()).save(any());
+
+  }
+
+  @Test
   public void testDeleteMessage_givenMessageId_deletesMessage() throws JsonProcessingException {
     MessageModel messageModel = buildMessageEntity();
     when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(messageModel));
@@ -80,6 +101,23 @@ class MessageServiceTest {
 
     messageService.deleteMessage("admin", "1");
     verify(messageBoardRepository, times(1)).deleteById(anyLong());
+  }
+
+  @Test
+  public void testDeleteMessage_givenMessageIdWithNotMatchingUsername_throwsException() throws JsonProcessingException {
+    MessageModel messageModel = buildMessageEntity();
+    when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(messageModel));
+
+    Exception exception = assertThrows(MessagesDataException.class, () -> {
+      messageService.deleteMessage("", "1");
+    });
+
+    String expectedMessage = String.valueOf(ErrorMessage.DELETION_NOT_ALLOWED);
+    String actualMessage = exception.getMessage();
+
+    assertEquals(expectedMessage, actualMessage);
+    verify(messageBoardRepository, never()).save(any());
+
   }
 
   private MessageModel buildMessageEntity() {
