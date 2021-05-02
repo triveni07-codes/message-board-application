@@ -1,6 +1,8 @@
 package com.assignment.messageboardapi.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,7 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
+import com.assignment.messageboardapi.api.dto.MessageModificationRequest;
 import com.assignment.messageboardapi.constant.CustomHttpConstants;
+import com.assignment.messageboardapi.database.model.MessageModel;
 import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
 import com.assignment.messageboardapi.service.MessageService;
 import com.assignment.messageboardapi.util.FileLoader;
@@ -30,6 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = MessageBoardController.class)
@@ -88,6 +93,36 @@ class MessageBoardControllerTest {
     String expectedMessagesList = mvcResult.getResponse().getContentAsString();
     Assertions.assertEquals(expectedMessagesList, objectMapper.writeValueAsString(mockMessagesList));
     verify(messageService, times(1)).getAllMessages();
+  }
+
+  @Test
+  public void testModifyMessage_givenModificationRequest_returnsModifiedMessage() throws Exception {
+    String modifiedMessage = "message modified";
+
+    MessageModificationRequest messageModificationRequest = new MessageModificationRequest();
+    messageModificationRequest.setMessageToBeUpdated(modifiedMessage);
+
+    MessageModel existingMessageModel = new MessageModel();
+    existingMessageModel.setId(1L);
+    existingMessageModel.setMessage("Existing message");
+
+    MessageDTO messageDTO = new MessageDTO();
+    messageDTO.setMessage(modifiedMessage);
+
+    when(messageService.modifyMessage(anyString(), anyString(), any())).thenReturn(messageDTO);
+    when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(existingMessageModel));
+
+    existingMessageModel.setMessage(messageModificationRequest.getMessageToBeUpdated()); //updated model
+    when(messageBoardRepository.save(any())).thenReturn(existingMessageModel);
+
+    mockMvc.perform(MockMvcRequestBuilders
+        .put("/api/messages/{username}/{id}", "admin", "1")
+        .headers(httpHeaders)
+        .content(new ObjectMapper().writeValueAsString(messageModificationRequest)))
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(modifiedMessage));
+
+    verify(messageService, times(1)).modifyMessage(anyString(), anyString(), any());
   }
 
   @Test
