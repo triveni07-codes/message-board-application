@@ -26,34 +26,42 @@ public class MessageService implements MessageBoardService {
   public MessageDTO createNewMessage(MessageDetails messageDetails) {
     MessageModel messageModel = new MessageModel();
     messageModel.setMessage(messageDetails.getMessage());
+    messageModel.setUsername(messageDetails.getUsername());
     MessageModel savedMessage = messageBoardRepository.save(messageModel);
     return buildMessageDTO(savedMessage.getId(), savedMessage.getMessage());
   }
 
   @Override
   public List<MessageDTO> getAllMessages() {
-    List<MessageDTO> messages;
-    List<MessageModel> messageModels = messageBoardRepository.findAll();
-    messages = messageModels.stream()
+    return messageBoardRepository.findAll()
+        .stream()
         .map(messageModel -> buildMessageDTO(messageModel.getId(), messageModel.getMessage()))
         .collect(Collectors.toList());
 
-    return messages;
   }
 
   @Override
-  public MessageDTO modifyMessage(String id, String message) {
+  public MessageDTO modifyMessage(String username, String id, String message) {
     log.info("Updating message for id {}", id);
     MessageModel messageModel = findMessageById(id);
+    if (!username.equals(messageModel.getUsername())) {
+      throw new MessagesDataException("Permission not allowed to modify message.", HttpStatus.UNAUTHORIZED);
+    }
     messageModel.setMessage(message);
     MessageModel savedMessage = messageBoardRepository.save(messageModel);
     log.info("Updated message for id {}", id);
     return buildMessageDTO(savedMessage.getId(), savedMessage.getMessage());
+
   }
 
   @Override
-  public void deleteMessage(String id) {
+  public void deleteMessage(String username, String id) {
+    MessageModel messageModel = findMessageById(id);
+    if (!username.equals(messageModel.getUsername())) {
+      throw new MessagesDataException("Permission not allowed to delete message.", HttpStatus.UNAUTHORIZED);
+    }
     messageBoardRepository.deleteById(Long.parseLong(id));
+
   }
 
   public MessageModel findMessageById(String id) {

@@ -2,6 +2,7 @@ package com.assignment.messageboardapi.api;
 
 import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
+import com.assignment.messageboardapi.api.dto.MessageModificationRequest;
 import com.assignment.messageboardapi.constant.CustomHttpConstants;
 import com.assignment.messageboardapi.exception.ErrorResponse;
 import io.swagger.annotations.Api;
@@ -47,30 +48,35 @@ public interface MessageBoardApi {
   @GetMapping(value = "/messages",
       produces = {"application/json"})
   ResponseEntity<List<MessageDTO>> viewAllMessages(
-      @ApiParam @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
+      @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
 
   @ApiOperation(value = "Update message details", nickname = "updateMessage", notes = "To update message")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "A message details has been updated", response = MessageDTO.class),
       @ApiResponse(code = 400, message = "Invalid input supplied", response = ErrorResponse.class)})
-  @PutMapping(value = "/messages/{id}",
+  @PutMapping(value = "/messages/{username}/{id}",
       produces = {"application/json"})
   ResponseEntity<MessageDTO> modifyMessage(
+      @ApiParam(value = "username or client name who has permission to update", required = true)
+      @NotBlank @PathVariable("username") String username,
       @ApiParam(value = "Id of the message that needs to be modified", required = true)
       @NotBlank @PathVariable("id") String messageId,
       @ApiParam(value = "Modifications to be done", required = true)
-      @RequestBody MessageDetails messageModificationRequest,
-      @ApiParam @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
+      @RequestBody MessageModificationRequest messageModificationRequest,
+      @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
 
   @ApiOperation(value = "Delete the message", nickname = "deleteMessage",
       notes = "To remove message:")
   @ApiResponses(value = {
       @ApiResponse(code = 204, message = "A message has been deleted"),
       @ApiResponse(code = 400, message = "Invalid input supplied", response = ErrorResponse.class)})
-  @DeleteMapping(value = "/messages/{id}",
+  @DeleteMapping(value = "/messages/{username}/{id}",
       produces = {"application/json"})
-  ResponseEntity<String> deleteMessage(@ApiParam(value = "Message id to be deleted") @Valid @NotNull
-  @PathVariable(name = "id", required = true) String id,
-      @ApiParam @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
+  ResponseEntity<String> deleteMessage(
+      @ApiParam(value = "username or client name who has permission to delete", required = true)
+      @NotBlank @PathVariable("username") String username,
+      @ApiParam(value = "Message id to be deleted") @Valid @NotNull
+      @PathVariable(name = "id", required = true) String id,
+      @NotBlank @RequestHeader(value = CustomHttpConstants.X_TRANSACTION_ID) String xTransactionId);
 
 }

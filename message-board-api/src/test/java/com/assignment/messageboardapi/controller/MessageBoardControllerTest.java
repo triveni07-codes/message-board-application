@@ -1,8 +1,6 @@
 package com.assignment.messageboardapi.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
 import com.assignment.messageboardapi.constant.CustomHttpConstants;
-import com.assignment.messageboardapi.database.model.MessageModel;
 import com.assignment.messageboardapi.database.repository.MessageBoardRepository;
 import com.assignment.messageboardapi.service.MessageService;
 import com.assignment.messageboardapi.util.FileLoader;
@@ -33,7 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = MessageBoardController.class)
@@ -97,7 +93,7 @@ class MessageBoardControllerTest {
   @Test
   public void testDeleteMessage_givenMessageId_deletsMessage() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders
-        .delete("/api/messages/{id}", "1")
+        .delete("/api/messages/{username}/{id}", "admin", "1")
         .headers(httpHeaders)).andExpect(status()
         .is2xxSuccessful()).andReturn();
   }

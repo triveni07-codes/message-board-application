@@ -38,10 +38,7 @@ class MessageServiceTest {
   public void testCreateNewMessage_givenMessageDetails_savesMessageInDb() {
     MessageDetails expectedMessage = new MessageDetails();
     expectedMessage.setMessage("someMessage");
-    MessageModel mockEntity = new MessageModel();
-    mockEntity.setId(1L);
-    mockEntity.setMessage(expectedMessage.getMessage());
-
+    MessageModel mockEntity = buildMessageEntity();
     when(messageBoardRepository.save(any())).thenReturn(mockEntity);
 
     MessageDTO actualMessage = messageService.createNewMessage(expectedMessage);
@@ -53,9 +50,7 @@ class MessageServiceTest {
   @Test
   public void testGetAllMessages_returnsListOfMessages() throws JsonProcessingException {
     List<MessageModel> mockMessagesList = new ArrayList<>();
-    MessageModel messageModel = new MessageModel();
-    messageModel.setId(1L);
-    messageModel.setMessage("someMessage");
+    MessageModel messageModel = buildMessageEntity();
     mockMessagesList.add(messageModel);
     when(messageBoardRepository.findAll()).thenReturn(mockMessagesList);
 
@@ -67,13 +62,11 @@ class MessageServiceTest {
 
   @Test
   public void testUpdateMessage_givenMessageIdAndModificationContent_updatesMessage() throws JsonProcessingException {
-    MessageModel messageModel = new MessageModel();
-    messageModel.setId(1L);
-    messageModel.setMessage("someMessage");
+    MessageModel messageModel = buildMessageEntity();
     when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(messageModel));
     when(messageBoardRepository.save(any())).thenReturn(messageModel);
 
-    MessageDTO updatedMessageDto = messageService.modifyMessage("1", "updatedMessage");
+    MessageDTO updatedMessageDto = messageService.modifyMessage("admin", "1", "updatedMessage");
     assertEquals("updatedMessage", updatedMessageDto.getMessage());
     verify(messageBoardRepository, times(1)).save(any());
 
@@ -81,9 +74,20 @@ class MessageServiceTest {
 
   @Test
   public void testDeleteMessage_givenMessageId_deletesMessage() throws JsonProcessingException {
+    MessageModel messageModel = buildMessageEntity();
+    when(messageBoardRepository.findById(anyLong())).thenReturn(java.util.Optional.of(messageModel));
     doNothing().when(messageBoardRepository).deleteById(anyLong());
-    messageService.deleteMessage("1");
+
+    messageService.deleteMessage("admin", "1");
     verify(messageBoardRepository, times(1)).deleteById(anyLong());
+  }
+
+  private MessageModel buildMessageEntity() {
+    MessageModel messageModel = new MessageModel();
+    messageModel.setId(1L);
+    messageModel.setMessage("someMessage");
+    messageModel.setUsername("admin");
+    return messageModel;
   }
 
 }

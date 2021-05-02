@@ -3,6 +3,7 @@ package com.assignment.messageboardapi.controller;
 import com.assignment.messageboardapi.api.MessageBoardApi;
 import com.assignment.messageboardapi.api.dto.MessageDTO;
 import com.assignment.messageboardapi.api.dto.MessageDetails;
+import com.assignment.messageboardapi.api.dto.MessageModificationRequest;
 import com.assignment.messageboardapi.service.MessageBoardService;
 import java.util.List;
 import javax.validation.Valid;
@@ -37,18 +38,20 @@ public class MessageBoardController implements MessageBoardApi {
   }
 
   @Override
-  public ResponseEntity<MessageDTO> modifyMessage(@NotBlank String messageId,
-      MessageDetails messageModificationRequest, @NotBlank String xTransactionId) {
+  public ResponseEntity<MessageDTO> modifyMessage(@NotBlank String username, @NotBlank String messageId,
+      MessageModificationRequest messageModificationRequest, @NotBlank String xTransactionId) {
     log.info("Request received to modify message with transactionId {}", xTransactionId);
-    MessageDTO updatedMessage = messageBoardService.modifyMessage(messageId, messageModificationRequest.getMessage());
+    MessageDTO updatedMessage = messageBoardService
+        .modifyMessage(username, messageId, messageModificationRequest.getMessageToBeUpdated());
     log.info("Message modified successfully transactionId {}", xTransactionId);
     return new ResponseEntity<MessageDTO>(updatedMessage, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<String> deleteMessage(@Valid @NotNull String id, @NotBlank String xTransactionId) {
+  public ResponseEntity<String> deleteMessage(@NotBlank String username, @NotNull String id,
+      @NotBlank String xTransactionId) {
     log.info("Request received to delete message with transactionId {}", xTransactionId);
-    messageBoardService.deleteMessage(id);
+    messageBoardService.deleteMessage(username, id);
     log.info("Message deleted successfully with transactionId {}", xTransactionId);
     return new ResponseEntity<>("Message deleted successfully", HttpStatus.NO_CONTENT);
   }

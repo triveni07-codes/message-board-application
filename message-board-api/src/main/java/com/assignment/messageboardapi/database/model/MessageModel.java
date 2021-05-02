@@ -16,6 +16,9 @@ public class MessageModel implements Serializable {
   @Column(name = "ID")
   private Long id;
 
+  @Column(name = "USERNAME")
+  private String username;
+
   @Column(name = "MESSAGE")
   private String message;
 }

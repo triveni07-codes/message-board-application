@@ -10,7 +10,7 @@ public interface MessageBoardService {
 
   List<MessageDTO> getAllMessages();
 
-  MessageDTO modifyMessage(String id, String message);
+  MessageDTO modifyMessage(String username, String id, String message);
 
-  void deleteMessage(String id);
+  void deleteMessage(String username, String id);
 }
