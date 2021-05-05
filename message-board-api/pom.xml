@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.assignment</groupId>
 	<artifactId>message-board-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>message-board-api</name>
 	<description>Public message board management api</description>
 	<properties>
